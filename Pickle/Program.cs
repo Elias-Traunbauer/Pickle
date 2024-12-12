@@ -23,11 +23,12 @@ namespace Pickle
             string requestVerificationToken = Regex.Match(html, patternToken).Groups[1].Value;
 
             // login
-           
+
 
             string username = "admin";
 
-            for (int i = 0; i < 50; i++) {
+            for (int i = 0; i < 50; i++)
+            {
                 byte[] ff = new byte[10];
                 Random.Shared.NextBytes(ff);
                 // base64
@@ -42,41 +43,38 @@ namespace Pickle
                 // get response with status code and all
                 var response = client.SendAsync(request).Result;
 
-                lock(patternToken)
+                // date/time with ms
+                Console.WriteLine(DateTime.Now.ToString("[dd.MM.yy HH:mm:ss:fff] "));
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    // date/time with ms
-                    Console.WriteLine(DateTime.Now.ToString("[dd.MM.yy HH:mm:ss:fff] "));
-                    if (response.StatusCode == HttpStatusCode.OK)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.Write(response.StatusCode);
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.Write(response.StatusCode);
-                    }
-                    Console.ForegroundColor = ConsoleColor.White;
-
-                    Console.WriteLine($" {username} {password}");
-                    string resBody = response.Content.ReadAsStringAsync().Result;
-                    bool isLoginFailed = resBody.Contains("password provided is incorrect");
-
-                    if (!isLoginFailed)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Login successful");
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Denied");
-                    }
-                    Console.ForegroundColor = ConsoleColor.Gray;
-
-                    Console.WriteLine(resBody);
-                    Console.WriteLine();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.Write(response.StatusCode);
                 }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.Write(response.StatusCode);
+                }
+                Console.ForegroundColor = ConsoleColor.White;
+
+                Console.WriteLine($" {username} {password}");
+                string resBody = response.Content.ReadAsStringAsync().Result;
+                bool isLoginFailed = resBody.Contains("password provided is incorrect");
+
+                if (!isLoginFailed)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine("Login successful");
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Denied");
+                }
+                Console.ForegroundColor = ConsoleColor.Gray;
+
+                Console.WriteLine(resBody);
+                Console.WriteLine();
             }
 
             Console.ReadKey();
